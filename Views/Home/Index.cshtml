@@ -1,6 +1,41 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+﻿
+@{ ViewData["Title"] = "Home Page"; }
+<h1></h1>
+<a asp-controller="Forum" asp-action="Details">Back to forum</a>
+
+@foreach (var p in ViewBag.result)
+{
+    <div class="card">
+
+        <div class="card-body row">
+            <div class="col-2 text-center">
+                <img src="p" width="60px" />
+
+                <br />
+                <a asp-controller="Profile" asp-action="Details" asp-route-id="1"></a>
+
+                <p class="badge badge-dark" style="width: 60px;">Admin</p>            }
+                <br />
+                Points:
+
+
+            </div>
+            <div class="col-10">
+
+                <p class="card-text"> @p.content</p>
+
+            </div>
+        </div>
+        <div class="card-footer text-muted">
+            Posted on: admin
+        </div>
+    </div>
 }
+<br />
+
+
+
+<br />
 
 <div class="jumbotron">
     <h1>ASP.NET</h1>
