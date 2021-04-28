@@ -1,0 +1,8 @@
+{
+  "solution": {
+    "path": "KenderGartenFront.sln",
+    "projects": [
+      "KenderGartenFront.csproj"
+    ]
+  }
+}
