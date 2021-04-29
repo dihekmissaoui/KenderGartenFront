@@ -14,38 +14,57 @@ namespace KenderGartenFront.Controllers
     public class ForumController : Controller
     {
         // GET: Forum
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
-            string Baseurl = "http://localhost:8085/";
             List<Forum> getForum = new List<Forum>();
-            using (var client = new HttpClient())
+
+
+            HttpClient Client = new HttpClient();
+            Client.BaseAddress = new Uri("http://localhost:8085");
+            Client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            HttpResponseMessage response = Client.GetAsync("/api/forum/").Result;
+            IEnumerable<Forum> result;
+            if (response.IsSuccessStatusCode)
             {
-                //Passing service base url  
-                client.BaseAddress = new Uri(Baseurl);
+                var ForumResponse = response.Content.ReadAsStringAsync().Result;
 
-                client.DefaultRequestHeaders.Clear();
-                //Define request data format  
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                //Deserializing the response recieved from web api and storing into the Employee list  
 
-                //Sending request to find web api REST service resource GetAllEmployees using HttpClient  
-                HttpResponseMessage Res = await client.GetAsync("/api/forum/");
-                if (Res.IsSuccessStatusCode)
-                {
-                    //Storing the response details recieved from web api   
-                    var UserResponse = Res.Content.ReadAsStringAsync().Result;
-
-                    //Deserializing the response recieved from web api and storing into the Employee list  
-                    getForum = JsonConvert.DeserializeObject<List<Forum>>(UserResponse);
-
-                }
-                return View(getForum);
+                result = JsonConvert.DeserializeObject<List<Forum>>(ForumResponse);
             }
+            else
+            { result = null; }
+            return View(result);
         }
 
         // GET: Forum/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            int counts=0;
+            HttpClient client = new HttpClient();
+            Forum forum = null;
+            client.BaseAddress = new Uri("http://localhost:8085");
+            //HTTP GET("SpringMVC/servlet/GetActivities")
+            var responseTask = client.GetAsync("/api/forum/" + id.ToString());
+            var responseTask2 = client.GetAsync("/api/forum/getlikes/" + id.ToString());
+            var results = responseTask2.Result;
+            var result = responseTask.Result;
+            if (results.IsSuccessStatusCode)
+            {
+                var readTasks = results.Content.ReadAsAsync<int>();
+
+                counts = readTasks.Result;
+                ViewBag.countLike = counts;
+            }
+
+
+            if (result.IsSuccessStatusCode)
+            {
+                var readTask = result.Content.ReadAsAsync<Forum>();
+
+                forum = readTask.Result;
+            }
+            return View(forum);
         }
 
         // GET: Forum/Create
@@ -56,12 +75,14 @@ namespace KenderGartenFront.Controllers
 
         // POST: Forum/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public object Create(Forum forum)
         {
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri("http://localhost:8085");
             try
             {
                 // TODO: Add insert logic here
-
+                client.PostAsJsonAsync<Forum>("/api/forum/", forum).ContinueWith((postTask) => postTask.Result.EnsureSuccessStatusCode());
                 return RedirectToAction("Index");
             }
             catch
@@ -73,29 +94,54 @@ namespace KenderGartenFront.Controllers
         // GET: Forum/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            HttpClient client = new HttpClient();
+            Forum forum = null;
+            client.BaseAddress = new Uri("http://localhost:8085");
+            var responseTask = client.GetAsync("/api/forum/" + id.ToString());
+
+            var result = responseTask.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                var readTask = result.Content.ReadAsAsync<Forum>();
+
+                forum = readTask.Result;
+            }
+            return View(forum);
         }
 
         // POST: Forum/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Edit(int id, Forum f)
         {
-            try
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri("http://localhost:8085");
+            //HTTP POST
+            var putTask = client.PutAsJsonAsync<Forum>("/api/forum/" + id.ToString(), f);
+            putTask.Wait();
+            var result = putTask.Result;
+            if (result.IsSuccessStatusCode)
             {
-                // TODO: Add update logic here
-
                 return RedirectToAction("Index");
             }
-            catch
-            {
-                return View();
-            }
+            return View();
         }
 
         // GET: Forum/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            HttpClient client = new HttpClient();
+            Forum forum = null;
+            client.BaseAddress = new Uri("http://localhost:8085");
+            var responseTask = client.GetAsync("/api/forum/" + id.ToString());
+
+            var result = responseTask.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                var readTask = result.Content.ReadAsAsync<Forum>();
+
+                forum = readTask.Result;
+            }
+            return View(forum);
         }
 
         // POST: Forum/Delete/5
@@ -104,14 +150,65 @@ namespace KenderGartenFront.Controllers
         {
             try
             {
-                // TODO: Add delete logic here
+                HttpClient Client = new HttpClient();
+                Client.BaseAddress = new Uri("http://localhost:8085");
+                HttpResponseMessage response = Client.DeleteAsync("/api/forum/" + id.ToString()).Result;
 
                 return RedirectToAction("Index");
             }
             catch
             {
                 return View();
+
             }
         }
+
+        public object Likes(likes forum, int id)
+        {
+            HttpClient client = new HttpClient();
+            Forum fs = null;
+            client.BaseAddress = new Uri("http://localhost:8085");
+            //HTTP GET("SpringMVC/servlet/GetActivities")
+            var responseTask = client.GetAsync("/api/forum/" + id.ToString());
+
+            var result = responseTask.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                var readTask = result.Content.ReadAsAsync<Forum>();
+
+                fs = readTask.Result;
+            }
+
+
+            try
+            {
+                // TODO: Add insert logic here
+                forum.forum_id = id;
+                client.PostAsJsonAsync<likes>("/api/forum/likes", forum).ContinueWith((postTask) => postTask.Result.EnsureSuccessStatusCode());
+
+               
+
+
+
+
+
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return View(fs);
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
     }
 }

@@ -1,0 +1,57 @@
+﻿@model KenderGartenFront.Models.questionForum
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>questionForum</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.question)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.question)
+        </dd>
+
+    </dl>
+</div>
+
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
+
+@Html.ActionLink("Create response", "Create", "reponse", new { id = Model.id}, null)
+<table class="table">
+    <tr>
+
+        <th>
+            @Html.DisplayNameFor(model => model.reponses)
+        </th>
+        <th> Action</th>
+
+
+    </tr>
+
+    @foreach (var item in Model.reponses)
+    {
+        <tr>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.reponse)
+
+            </td>
+
+            <td>
+
+            </td>
+
+        </tr>
+    }
+
+</table>

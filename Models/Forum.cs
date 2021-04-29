@@ -9,7 +9,7 @@ namespace KenderGartenFront.Models
     { public int id { get; set; }
         public string title { get; set; }
         public string subject { get; set; }
-        public DateTime date { get; set; }
+        public string date { get; set; }
         public  IList<questionForum> questions { get; set; }
 
     }
