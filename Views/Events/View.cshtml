@@ -1,0 +1,66 @@
+﻿@model WebApplication3.Models.Events
+@{
+    ViewBag.Title = "View";
+}
+
+<h2>Details</h2>
+<div>
+    <h4>Events</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        @foreach (var ev in ViewBag.result)
+        {
+
+            <dt> @Html.DisplayNameFor(model => model.name_events) </dt>
+            <dd>@ev.name_events</dd>
+
+            <dt>@Html.DisplayNameFor(model => model.date_events) </dt>
+            <dd> @ev.date_events</dd>
+
+            <dt> @Html.DisplayNameFor(model => model.description_events) </dt>
+            <dd> @ev.description_events </dd>
+
+            <dt>@Html.DisplayNameFor(model => model.affiche_events)</dt>
+            <dd>@ev.affiche_events)</dd>
+
+            <dt>@Html.DisplayNameFor(model => model.participates) </dt>
+            <dd>@ev.participates</dd>
+
+            <dt>@Html.DisplayNameFor(model => model.not_interested) </dt>
+            <dd>@ev.not_interested</dd>
+
+            <dt>@Html.DisplayNameFor(model => model.interested)</dt>
+            <dd>@ev.interested</dd>
+
+        }
+    </dl>
+
+    <table cellpadding="2" cellspacing="2">
+        <tr>
+            <th>Commentaires</th>
+            <th>name</th>
+            <th>last name</th>
+        </tr>
+
+        @foreach (var com in ViewBag.result2)
+        {
+            <tr>
+                @foreach (var u in ViewBag.result3)
+                {
+
+                    <td>@com.commentaire</td>
+                    <td>@u.name</td>
+                    <td>@u.lastname</td>
+
+                }
+            </tr>
+
+        }
+    </table>
+</div>
+}
+
+<p>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
